@@ -348,13 +348,12 @@ namespace GitVersion
         }
 
 
-        public SemanticVersion GetCurrentCommitTaggedVersion(Branch branch, GitObject commit, EffectiveConfiguration config)
+        public SemanticVersion GetCurrentCommitTaggedVersion(GitObject commit, EffectiveConfiguration config)
         {
             return repository.Tags
                 .SelectMany(t =>
                 {
-                    var tag = config.GetBranchSpecificTag(null, branch.FriendlyName, null);
-                    if (t.PeeledTarget() == commit && SemanticVersion.TryParse(t.FriendlyName, config.GitTagPrefix, tag, out var version))
+                    if (t.PeeledTarget() == commit && SemanticVersion.TryParse(t.FriendlyName, config.GitTagPrefix, out var version))
                         return new[] {
                             version
                         };
@@ -369,7 +368,7 @@ namespace GitVersion
             return increment != null ? baseVersion.SemanticVersion.IncrementVersion(increment.Value) : baseVersion.SemanticVersion;
         }
 
-        public IEnumerable<SemanticVersion> GetVersionTagsOnBranch(Branch branch, string tagPrefixRegex, string tagSuffix)
+        public IEnumerable<SemanticVersion> GetVersionTagsOnBranch(Branch branch, string tagPrefixRegex)
         {
             if (semanticVersionTagsOnBranchCache.ContainsKey(branch))
             {
@@ -379,7 +378,7 @@ namespace GitVersion
 
             using (log.IndentLog($"Getting version tags from branch '{branch.CanonicalName}'."))
             {
-                var tags = GetValidVersionTags(tagPrefixRegex, tagSuffix);
+                var tags = GetValidVersionTags(tagPrefixRegex);
 
                 var versionTags = branch.Commits.SelectMany(c => tags.Where(t => c.Sha == t.Item1.Target.Sha).Select(t => t.Item2)).ToList();
 
@@ -388,7 +387,7 @@ namespace GitVersion
             }
         }
 
-        public IEnumerable<Tuple<Tag, SemanticVersion>> GetValidVersionTags(string tagPrefixRegex, string tagSuffix, DateTimeOffset? olderThan = null)
+        public IEnumerable<Tuple<Tag, SemanticVersion>> GetValidVersionTags(string tagPrefixRegex, DateTimeOffset? olderThan = null)
         {
             var tags = new List<Tuple<Tag, SemanticVersion>>();
 
@@ -397,7 +396,7 @@ namespace GitVersion
                 if (!(tag.PeeledTarget() is Commit commit) || (olderThan.HasValue && commit.When() > olderThan.Value))
                     continue;
 
-                if (SemanticVersion.TryParse(tag.FriendlyName, tagPrefixRegex, tagSuffix, out var semver))
+                if (SemanticVersion.TryParse(tag.FriendlyName, tagPrefixRegex, out var semver))
                 {
                     tags.Add(Tuple.Create(tag, semver));
                 }

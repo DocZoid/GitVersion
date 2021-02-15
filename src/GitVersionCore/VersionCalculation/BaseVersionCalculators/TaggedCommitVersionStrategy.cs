@@ -28,8 +28,7 @@ namespace GitVersion.VersionCalculation
 
         internal IEnumerable<BaseVersion> GetTaggedVersions(Branch currentBranch, DateTimeOffset? olderThan)
         {
-            var tagToUse = "";//Context.Configuration.GetBranchSpecificTag(null, currentBranch.FriendlyName, null);
-            var allTags = repositoryMetadataProvider.GetValidVersionTags(Context.Configuration.GitTagPrefix, tagToUse, olderThan);
+            var allTags = repositoryMetadataProvider.GetValidVersionTags(Context.Configuration.GitTagPrefix, olderThan);
 
 
             var taggedVersions = currentBranch
