@@ -25,6 +25,7 @@ branches:
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 0
+    prefer-branch-config-over-existing-tag: false
   master:
     mode: ContinuousDelivery
     tag: ''
@@ -39,6 +40,7 @@ branches:
     is-release-branch: false
     is-mainline: true
     pre-release-weight: 55000
+    prefer-branch-config-over-existing-tag: false
   release:
     mode: ContinuousDelivery
     tag: beta
@@ -55,6 +57,7 @@ branches:
     is-release-branch: true
     is-mainline: false
     pre-release-weight: 30000
+    prefer-branch-config-over-existing-tag: false
   feature:
     mode: ContinuousDelivery
     tag: useBranchName
@@ -73,6 +76,7 @@ branches:
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
+    prefer-branch-config-over-existing-tag: false
   pull-request:
     mode: ContinuousDelivery
     tag: PullRequest
@@ -92,6 +96,7 @@ branches:
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
+    prefer-branch-config-over-existing-tag: false
   hotfix:
     mode: ContinuousDelivery
     tag: beta
@@ -107,6 +112,7 @@ branches:
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
+    prefer-branch-config-over-existing-tag: false
   support:
     mode: ContinuousDelivery
     tag: ''

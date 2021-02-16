@@ -42,17 +42,27 @@ namespace GitVersion.VersionCalculation
 
             SemanticVersion taggedSemanticVersion = null;
 
+            var branchConfigHasPreReleaseTagConfigured = !string.IsNullOrEmpty(context.Configuration.Tag);
             if (context.IsCurrentCommitTagged)
             {
-                // Will always be 0, don't bother with the +0 on tags
-                var semanticVersionBuildMetaData = mainlineVersionCalculator.CreateVersionBuildMetaData(context.CurrentCommit);
-                semanticVersionBuildMetaData.CommitsSinceTag = null;
-
-                var semanticVersion = new SemanticVersion(context.CurrentCommitTaggedVersion)
+                // If configured, check if another tag with different branch tag is needed
+                if (context.Configuration.PreferBranchConfigOverTag && branchConfigHasPreReleaseTagConfigured
+                    && !context.CurrentCommitTaggedVersion.PreReleaseTag.Name.Equals(context.Configuration.Tag))
                 {
-                    BuildMetaData = semanticVersionBuildMetaData
-                };
-                taggedSemanticVersion = semanticVersion;
+                    log.Info($"Current commit tag does not match the current branch configured expectation. Create another one.");
+                }
+                else
+                {
+                    // Will always be 0, don't bother with the +0 on tags
+                    var semanticVersionBuildMetaData = mainlineVersionCalculator.CreateVersionBuildMetaData(context.CurrentCommit);
+                    semanticVersionBuildMetaData.CommitsSinceTag = null;
+
+                    var semanticVersion = new SemanticVersion(context.CurrentCommitTaggedVersion)
+                    {
+                        BuildMetaData = semanticVersionBuildMetaData
+                    };
+                    taggedSemanticVersion = semanticVersion;
+                }
             }
 
             var baseVersion = baseVersionCalculator.GetBaseVersion();
@@ -68,7 +78,6 @@ namespace GitVersion.VersionCalculation
             }
 
             var hasPreReleaseTag = semver.PreReleaseTag.HasTag();
-            var branchConfigHasPreReleaseTagConfigured = !string.IsNullOrEmpty(context.Configuration.Tag);
             var preReleaseTagDoesNotMatchConfiguration = hasPreReleaseTag && branchConfigHasPreReleaseTagConfigured && semver.PreReleaseTag.Name != context.Configuration.Tag;
             if (!semver.PreReleaseTag.HasTag() && branchConfigHasPreReleaseTagConfigured || preReleaseTagDoesNotMatchConfiguration)
             {

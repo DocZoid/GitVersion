@@ -79,6 +79,7 @@ namespace GitVersion.Configuration
             var preventIncrementForMergedBranchVersion = currentBranchConfig.PreventIncrementOfMergedBranchVersion.Value;
             var trackMergeTarget = currentBranchConfig.TrackMergeTarget.Value;
             var preReleaseWeight = currentBranchConfig.PreReleaseWeight ?? 0;
+            var preferBranchConfigOverTag = currentBranchConfig.PreferBranchConfigOverTag ?? false;
 
             var nextVersion = configuration.NextVersion;
             var assemblyVersioningScheme = configuration.AssemblyVersioningScheme.Value;
@@ -114,7 +115,8 @@ namespace GitVersion.Configuration
                 commitDateFormat,
                 updateBuildNumber,
                 preReleaseWeight,
-                tagPreReleaseWeight);
+                tagPreReleaseWeight,
+                preferBranchConfigOverTag);
         }
 
         public static string GetBranchSpecificTag(this EffectiveConfiguration configuration, ILog log, string branchFriendlyName, string branchNameOverride)

@@ -520,3 +520,13 @@ If the `pre-release-weight` is set, it would be added to the `PreReleaseNumber`
 to get a final `AssemblySemFileVer`, otherwise a branch specific default for
 `pre-release-weight` will be used in the calculation. Related Issues
 [1145](https://github.com/GitTools/GitVersion/issues/1145), [1366](https://github.com/GitTools/GitVersion/issues/1366)
+
+### prefer-branch-config-over-existing-tag
+
+If this is set true, GitVersion will prefer the configured branch (pre-release) tag
+over an existing git tag, when creating another tag for the same commit.
+Example: tag `1.1.0-alpha.42` was created while building the `develop` branch.
+Then `release/1.1.0` was created off this commit, without generating an empty commit.
+Building a release-candidate and running GitVersion on the release branch now will:
+- when set to `false` (default): create no new tag, using `1.1.0-alpha.42` again
+- when set to `true`: new tag e.g. `1.1.0-beta.1` will be created

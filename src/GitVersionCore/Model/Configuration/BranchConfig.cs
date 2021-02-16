@@ -32,6 +32,7 @@ namespace GitVersion.Model.Configuration
             SourceBranches = branchConfiguration.SourceBranches;
             IsSourceBranchFor = branchConfiguration.IsSourceBranchFor;
             PreReleaseWeight = branchConfiguration.PreReleaseWeight;
+            PreferBranchConfigOverTag = branchConfiguration.PreferBranchConfigOverTag;
         }
 
         [YamlMember(Alias = "mode")]
@@ -80,6 +81,13 @@ namespace GitVersion.Model.Configuration
         public int? PreReleaseWeight { get; set; }
 
         /// <summary>
+        /// If true, the NextVersionCalculator will check that an existing tag is matching the configured tag for this branch.
+        /// If the tag isn't matching, a new tag with the configured string will be created.
+        /// </summary>
+        [YamlMember(Alias = "prefer-branch-config-over-existing-tag")]
+        public bool? PreferBranchConfigOverTag { get; set; }
+
+        /// <summary>
         /// The name given to this configuration in the config file.
         /// </summary>
         [YamlIgnore]
@@ -103,6 +111,7 @@ namespace GitVersion.Model.Configuration
             targetConfig.IsReleaseBranch = this.IsReleaseBranch ?? targetConfig.IsReleaseBranch;
             targetConfig.IsMainline = this.IsMainline ?? targetConfig.IsMainline;
             targetConfig.PreReleaseWeight = this.PreReleaseWeight ?? targetConfig.PreReleaseWeight;
+            targetConfig.PreferBranchConfigOverTag = this.PreferBranchConfigOverTag ?? targetConfig.PreferBranchConfigOverTag;
         }
 
         public BranchConfig Apply([NotNull] BranchConfig overrides)
@@ -124,6 +133,7 @@ namespace GitVersion.Model.Configuration
                 TracksReleaseBranches = false,
                 IsReleaseBranch = false,
                 IsMainline = false,
+                PreferBranchConfigOverTag = false,
             };
         }
     }

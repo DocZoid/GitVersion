@@ -46,7 +46,7 @@ namespace GitVersionCore.Tests.IntegrationTests
             {
                 Branches =
                 {
-                    { "release", new BranchConfig { Tag = "beta" } },
+                    { "release", new BranchConfig { Tag = "beta", PreferBranchConfigOverTag = true } },
                     { "develop", new BranchConfig { Tag = "alpha" } }
                 }
             };
@@ -58,9 +58,10 @@ namespace GitVersionCore.Tests.IntegrationTests
 
             fixture.BranchTo("release/1.1.0"); // about to be released, no additional empty commit in this scenario!
             fixture.Checkout("release/1.1.0"); // still on the same commit, but another branch, choosing to build same code as beta now
-
-            // Assert
-            fixture.AssertFullSemver("1.1.0-beta.1", config); //Tag is an "alpha" tag from develop branch, only "beta" tags should count when on release branch. If no beta tag found, build new beta version on release branch.
+            
+			// Assert
+			fixture.AssertFullSemver("1.1.0-beta.1+0", config); //was 1.1.0-alpha.1, with the new config param 'prefer-branch-config-over-existing-tag' set to true should be 1.1.0-beta.1.
+                                                                //Tag is an "alpha" tag from develop branch, only "beta" tags should count when on release branch. If no beta tag found, build new beta version on release branch.
 
             fixture.Checkout("develop"); // back to develop
             fixture.AssertFullSemver("1.1.0-alpha.1", config); //will be 1.1.0-alpha.1 based on tag (as before)
