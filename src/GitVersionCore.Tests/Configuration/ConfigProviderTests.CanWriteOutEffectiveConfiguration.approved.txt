@@ -126,6 +126,7 @@ branches:
     is-release-branch: false
     is-mainline: true
     pre-release-weight: 55000
+    prefer-branch-config-over-existing-tag: false
 ignore:
   sha: []
 commit-date-format: yyyy-MM-dd
